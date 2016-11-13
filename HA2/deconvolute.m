@@ -1,63 +1,59 @@
 function [ outString ] = deconvolute( inString )
 
-    outString = {};
-    open = false;
-    done = false;
-    idx = 1;
-    jdx = 1;
+%% split input string with tags as seperator (both open and close)
+[tokens, matches, splitString] = regexp(inString, '(<[\w]+>)|(</[\w]+>)', 'tokenExtents', 'match', 'split');
+  
+%% get current tags for each split and open and close current tags respectively 
+outString = splitString{1};
+splitString(1) = [];
+currentTags = cell(0);
+idx=1;
+maxTags = 0;
 
-    sptString = strsplit(inString,{'<', '>'});
-
-    while (~done)
-
-        % Search For Opening Tags
-        if (sptString{idx} == 'b' & not(open) )
-            open = true;
-            tag = 'b';
-            outString{jdx} = ['<',tag,'>'];
-        elseif (sptString{idx} == 'i' & not(open))
-           open = true;
-           tag = 'i';
-           outString{jdx} = ['<',tag,'>'];
-        elseif (sptString{idx} == 'u' & not(open))
-            open = true;
-            tag = 'u';
-            outString{jdx} = ['<',tag,'>'];
-        else
-            outString{jdx} = sptString{idx};
-        end
-        % Find Opening Tag after Open Tag
-        if (open & ~(sptString{idx} == tag) & logical(sum(strcmp(sptString{idx},{'i','u','b'})))) 
-            newtag = sptString{idx};
-            outString{jdx} = ['</' tag '>'];
-            outString{jdx+1} = ['<' tag '>'];
-            outString{jdx+2} = ['<' newtag '>'];
-            tag = newtag;
-            jdx = jdx+2;
-        end
-        % Find Closing Tag after Open Tag
-        if (open & logical(sum(strcmp(sptString{idx},{'/i','/u','/b'}))))
-            closingtag = sptString{idx};
-            % Open and Closing Tag are equal
-            if ['/' tag] == closingtag
-                outString{jdx} = ['<' closingtag '>'];
-                open = false;
-            else
-            % Open and Closing Tag are not equal
-                outString{jdx} = ['</' tag '>'];
-                outString{jdx+1} = ['<' closingtag '>'];
-                outString{jdx+2} = ['<' tag '>'];
-                jdx = jdx+2;
-                open = true;
-            end 
-        end
-        idx = idx+1;
-        jdx = jdx+1;
-        if idx == length(sptString)
-            done = true;
+while(idx<=length(matches))
+      
+    % check for "open" tag
+    if(regexp(matches{idx}, '<[\w]+>'))
+        % add new tag
+        currentTags(length(currentTags)+1) = matches(idx);
+        if maxTags < length(currentTags)
+            maxTags = length(currentTags);
         end
     end
     
-    outString = cell2mat(outString);
+    % check for "close" tag
+    if(regexp(matches{idx}, '</[\w]+>'))
+        % remove a tag (last in list with same name)
+        for tag = length(currentTags):-1:1
+            if strcmp(currentTags{tag}, ['<' matches{idx}(3:end)])
+                currentTags(tag) = [];
+                break;
+            end
+        end   
+    end 
+    
+    
+    % open all current tags
+    for tag = 1:length(currentTags)
+        outString = [outString currentTags{tag}];
+    end
+    
+    outString = [outString splitString{idx}];
+    
+    % close all current tags
+    for tag = length(currentTags):-1:1
+        outString = [outString '</' currentTags{tag}(2:end-1) '>'];
+    end  
+    
+    idx = idx+1;
+end
+
+%% delete unnecesarry tags, e.g. <b></b>
+% repeat by the maximum number of current tags to catch nested cases, e.g. <b><u></u></b>
+for k = 1:maxTags
+    outString = regexprep(outString, '<([\w]+)></\1>', '');
+end
+
+
 end
 
