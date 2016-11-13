@@ -1,7 +1,7 @@
 function [ outString ] = deconvolute( inString )
 
 %% split input string with tags as seperator (both open and close)
-[tokens, matches, splitString] = regexp(inString, '(<[\w]+>)|(</[\w]+>)', 'tokenExtents', 'match', 'split');
+[matches, splitString] = regexp(inString, '(<[\w]+>)|(</[\w]+>)', 'match', 'split');
   
 %% get current tags for each split and open and close current tags respectively 
 outString = splitString{1};
