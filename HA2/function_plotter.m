@@ -22,7 +22,7 @@ function varargout = function_plotter(varargin)
 
 % Edit the above text to modify the response to help function_plotter
 
-% Last Modified by GUIDE v2.5 11-Nov-2016 16:45:20
+% Last Modified by GUIDE v2.5 13-Nov-2016 11:18:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -148,13 +148,11 @@ function plot_function_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-cla;
+colors = get(handles.popupmenu_color,'String');
+color = char(colors(get(handles.popupmenu_color,'Value')));
 
-colors = get(handles.popupmenu1,'String');
-color = char(colors(get(handles.popupmenu1,'Value')));
-
-lineStyles = get(handles.popupmenu2,'String');
-lineStyle = char(lineStyles(get(handles.popupmenu2,'Value')));
+lineStyles = get(handles.popupmenu_style,'String');
+lineStyle = char(lineStyles(get(handles.popupmenu_style,'Value')));
 
 phi = str2double(get(handles.Phase_edit,'String'));
 A = str2double(get(handles.Amplitude_Edit,'String'));
@@ -162,26 +160,17 @@ f = str2double(get(handles.Frequency_edit,'String'));
 x = [0:0.01:10];
 y = A*sin(2*pi*f*x+phi*pi/180);
 
-if get(handles.checkbox1,'Value')
-    grid on;
-else
-    grid off;
-end
-if get(handles.checkbox2,'Value')
-    box on;
-else
-    box off;
-end
-
 if strcmp(lineStyle,'solid')
-    style = '-'
+    style = '-';
 elseif strcmp(lineStyle,'dashed')
-    style = '--'
+    style = '--';
 elseif strcmp(lineStyle,'dotted')
     style = ':';
 end
-   
+
+hold on;
 line('xdata',x,'ydata',y,'color',color,'LineStyle',style);
+hold off;
 
 
 % --- Executes on button press in clear_axes.
@@ -200,21 +189,20 @@ function plot_function_ButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on selection change in popupmenu1.
-function popupmenu1_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
+% --- Executes on selection change in popupmenu_color.
+function popupmenu_color_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_color (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu1
-
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_color contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_color
 
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
+function popupmenu_color_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_color (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -225,19 +213,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in popupmenu2.
-function popupmenu2_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu2 (see GCBO)
+% --- Executes on selection change in popupmenu_style.
+function popupmenu_style_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_style (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu2 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu2
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_style contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_style
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu2 (see GCBO)
+function popupmenu_style_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_style (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -248,19 +236,28 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in checkbox1.
-function checkbox1_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox1 (see GCBO)
+% --- Executes on button press in checkbox_grid.
+function checkbox_grid_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_grid (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox1
+% Hint: get(hObject,'Value') returns toggle state of checkbox_grid
+if get(hObject,'Value')
+    grid on;
+else
+    grid off;
+end
 
-
-% --- Executes on button press in checkbox2.
-function checkbox2_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox2 (see GCBO)
+% --- Executes on button press in checkbox_box.
+function checkbox_box_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox2
+% Hint: get(hObject,'Value') returns toggle state of checkbox_box
+if get(hObject,'Value')
+    box on;
+else
+    box off;
+end
