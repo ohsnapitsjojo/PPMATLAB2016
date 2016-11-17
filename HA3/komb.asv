@@ -1,0 +1,13 @@
+function [ output ] = komb( a, b )
+%KOMB Summary of this function goes here
+%   Detailed explanation goes here
+    nRows = size(a,2)*size(b,2);
+    output = zeros( nRows ,2);
+
+    for j=1:nRows
+        rowA = mod(a,nRows);
+        output(:,j) =  [a(rowA)]
+    end
+    
+end
+
