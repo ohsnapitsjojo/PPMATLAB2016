@@ -1,17 +1,18 @@
-function [  ] = plot_my_function( x, f_h )
+function [ figure_handle ] = plot_my_function( x, f_h )
 
-    xAxis = [-x:0.05:x];
-    yAxis = zeros(length(xAxis));
-
-    for idx = 1:length(xAxis)
-        yAxis(idx) = f_h(xAxis(idx));
-    end
-    figure(1);
-    plot(xAxis,yAxis);  
+    % Berechne y-Werte
+    y = arrayfun(f_h,x);
+    
+    % erzeuge neues Figure
+    figure_handle = figure;
+    
+    % erzeuge plot von y über x
+    plot(x,y);  
     hold off;
     grid on;
     xlabel('X');
     ylabel('Y');
-    title('My Function');
+    title(['My Function (' func2str(f_h) ')']);
+    
 end
 
