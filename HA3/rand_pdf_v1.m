@@ -1,17 +1,13 @@
 function [ out ] = rand_pdf_v1( x, phi )
-
-    vmin = min(x);
-    vmax = max(x);
-    randnum = vmin + (vmax+vmax)*rand(1); % random number between vmin and vmax
     
-    diffmin = inf;
-    for idx = 1:length(x)
-        diff = abs(abs(x(idx))-abs(randnum));
-        if diff < diffmin
-            diffmin = diff;
-            index = idx;
-        end
-    end
-    out = phi(index);
+    % calculate cumulative sum
+	cpdf = cumsum(phi);
+    
+    % find nearest entry between a random number and cpdf
+    [~,idx] = min(abs(cpdf-rand(1)));
+    
+    % use found index to get corresponding value from x
+    out = x(idx);
+    
 end
 
